@@ -1,10 +1,10 @@
 <?php
 session_start();
 
-require_once '../app/models/UserModel.php';
-require_once '../app/controllers/AuthController.php';
-require_once '../app/controllers/FeedController.php';
-require_once '../config/database.php';
+require_once __DIR__ . '/../app/models/UserModel.php';
+require_once __DIR__ . '/../app/controllers/AuthController.php';
+require_once __DIR__ . '/../app/controllers/FeedController.php';
+require_once __DIR__ . '/../config/database.php';
 
 $route = $_GET['route'] ?? '';
 
@@ -16,7 +16,7 @@ switch ($route) {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $auth->login();
         } else {
-            require '../app/views/auth/login.php';
+            require __DIR__ . '/../app/views/auth/login.php';
         }
         break;
 
@@ -24,7 +24,7 @@ switch ($route) {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $auth->signup();
         } else {
-            require '../app/views/auth/signup.php';
+            require __DIR__ . '/../app/views/auth/signup.php';
         }
         break;
 
@@ -48,6 +48,14 @@ switch ($route) {
         $feed->addComment();
         break;
 
+    case 'edit_comment':
+        $feed->editComment();
+        break;
+
+    case 'update_comment':
+        $feed->updateComment();
+        break;
+
     case 'edit_post':
         $feed->editPost();
         break;
@@ -60,14 +68,6 @@ switch ($route) {
         $feed->deletePost();
         break;
 
-    case 'edit_comment':
-        $feed->editComment();
-        break;
-
-    case 'update_comment':
-        $feed->updateComment();
-        break;
-
     case 'delete_comment':
         $feed->deleteComment();
         break;
@@ -77,7 +77,7 @@ switch ($route) {
         break;
 
     case 'user':
-        require '../app/views/user_profile.php';
+        require __DIR__ . '/../app/views/user_profile.php';
         break;
 
     case 'edit_profile':
@@ -89,6 +89,6 @@ switch ($route) {
         break;
 
     default:
-        require '../app/views/auth/login.php';
+        require __DIR__ . '/../app/views/auth/login.php';
         break;
 }
