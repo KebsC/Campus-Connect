@@ -16,7 +16,7 @@ switch ($route) {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $auth->login();
         } else {
-            require __DIR__ . '/../app/views/auth/login.php';
+            require __DIR__ . '/app/views/auth/login.php';
         }
         break;
 
@@ -24,7 +24,7 @@ switch ($route) {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $auth->signup();
         } else {
-            require __DIR__ . '/../app/views/auth/signup.php';
+            require __DIR__ . '/app/views/auth/signup.php';
         }
         break;
 
@@ -77,7 +77,7 @@ switch ($route) {
         break;
 
     case 'user':
-        require __DIR__ . '/../app/views/user_profile.php';
+        require __DIR__ . '/app/views/user_profile.php';
         break;
 
     case 'edit_profile':
@@ -89,6 +89,6 @@ switch ($route) {
         break;
 
     default:
-        require __DIR__ . '/../app/views/auth/login.php';
+        require __DIR__ . '/app/views/auth/login.php';
         break;
 }
