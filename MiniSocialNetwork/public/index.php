@@ -1,0 +1,94 @@
+<?php
+session_start();
+
+require_once '../app/models/UserModel.php';
+require_once '../app/controllers/AuthController.php';
+require_once '../app/controllers/FeedController.php';
+require_once '../config/database.php';
+
+$route = $_GET['route'] ?? '';
+
+$auth = new AuthController();
+$feed = new FeedController();
+
+switch ($route) {
+    case 'login':
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $auth->login();
+        } else {
+            require '../app/views/auth/login.php';
+        }
+        break;
+
+    case 'signup':
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $auth->signup();
+        } else {
+            require '../app/views/auth/signup.php';
+        }
+        break;
+
+    case 'logout':
+        $auth->logout();
+        break;
+
+    case 'feed':
+        $feed->feed();
+        break;
+
+    case 'create_post':
+        $feed->createPost();
+        break;
+
+    case 'like':
+        $feed->like();
+        break;
+
+    case 'add_comment':
+        $feed->addComment();
+        break;
+
+    case 'edit_post':
+        $feed->editPost();
+        break;
+
+    case 'update_post':
+        $feed->updatePost();
+        break;
+
+    case 'delete_post':
+        $feed->deletePost();
+        break;
+
+    case 'edit_comment':
+        $feed->editComment();
+        break;
+
+    case 'update_comment':
+        $feed->updateComment();
+        break;
+
+    case 'delete_comment':
+        $feed->deleteComment();
+        break;
+
+    case 'profile':
+        $feed->profile();
+        break;
+
+    case 'user':
+        require '../app/views/user_profile.php';
+        break;
+
+    case 'edit_profile':
+        $feed->editProfile();
+        break;
+
+    case 'search':
+        $feed->search();
+        break;
+
+    default:
+        require '../app/views/auth/login.php';
+        break;
+}
