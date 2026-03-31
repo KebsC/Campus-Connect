@@ -3,14 +3,14 @@ $isLocal = $_SERVER['SERVER_NAME'] === 'localhost';
 
 if ($isLocal) {
     $host = "localhost";
-    $dbname = "your_local_db";
+    $dbname = "social_app";
     $username = "root";
     $password = "";
 } else {
-    $host = "your_live_host";
-    $dbname = "your_live_db";
-    $username = "your_live_user";
-    $password = "your_live_pass";
+    $host = "sql12.freesqldatabase.com";
+    $dbname = "sql12821796";
+    $username = "sql12821796";
+    $password = "ywp6PwMnMD";
 }
 
 $conn = new mysqli($host, $username, $password, $dbname);
