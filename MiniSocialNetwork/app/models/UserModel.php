@@ -1,11 +1,12 @@
 <?php
+
 class UserModel
 {
     private $conn;
 
     public function __construct()
     {
-        $this->conn = require $_SERVER['DOCUMENT_ROOT'] . '/MiniSocialNetwork/config/database.php';
+        $this->conn = require __DIR__ . '/../../config/database.php';
     }
 
     public function findUserByUsername($username)
