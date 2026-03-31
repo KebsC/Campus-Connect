@@ -1,6 +1,6 @@
 FROM php:8.2-cli
 
-WORKDIR /var/www
+WORKDIR /var/www/MiniSocialNetwork
 
 COPY . .
 
