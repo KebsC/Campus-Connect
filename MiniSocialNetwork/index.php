@@ -1,7 +1,7 @@
 <?php
 session_start();
 
-require_once __DIR__ . '/../app/models/UserModel.php';
+require_once __DIR__ . '/app/models/UserModel.php';
 require_once __DIR__ . '/../app/controllers/AuthController.php';
 require_once __DIR__ . '/../app/controllers/FeedController.php';
 require_once __DIR__ . '/../config/database.php';
