@@ -1,7 +1,7 @@
 <?php
-require_once $_SERVER['DOCUMENT_ROOT'] . '/MiniSocialNetwork/app/models/PostModel.php';
-require_once $_SERVER['DOCUMENT_ROOT'] . '/MiniSocialNetwork/app/models/UserModel.php';
-require_once $_SERVER['DOCUMENT_ROOT'] . '/MiniSocialNetwork/config/database.php';
+require_once __DIR__ . '/../models/PostModel.php';
+require_once __DIR__ . '/../models/UserModel.php';
+require_once __DIR__ . '/../../config/database.php';
 
 class FeedController
 {
@@ -29,7 +29,16 @@ class FeedController
         foreach ($posts as &$post) {
             $post['comments'] = $this->postModel->getCommentsByPost($post['id']);
         }
-        include $_SERVER['DOCUMENT_ROOT'] . '/MiniSocialNetwork/app/views/feed.php';
+        include __DIR__ . '/../views/feed.php';
+    }
+
+    public function profile()
+    {
+        $this->requireLogin();
+        $userModel = new UserModel();
+        $user = $userModel->findUserById($_SESSION['user_id']);
+        $posts = $this->postModel->getPostsByUser($user['id']);
+        include __DIR__ . '/../views/profile.php';
     }
 
     public function createPost()
@@ -86,7 +95,7 @@ class FeedController
             header("Location: ?route=feed");
             exit;
         }
-        include $_SERVER['DOCUMENT_ROOT'] . '/MiniSocialNetwork/app/views/edit_comment.php';
+        include __DIR__ . '/../views/edit_comment.php';
     }
 
     public function updateComment()
@@ -94,8 +103,8 @@ class FeedController
         $this->requireLogin();
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $commentId = (int) $_POST['comment_id'];
-            $content = trim($_POST['content']);
-            $comment = $this->postModel->getCommentById($commentId);
+            $content   = trim($_POST['content']);
+            $comment   = $this->postModel->getCommentById($commentId);
             if ($comment && $comment['user_id'] == $_SESSION['user_id'] && $content !== '') {
                 $this->postModel->updateComment($commentId, $content);
             }
@@ -122,14 +131,14 @@ class FeedController
             header("Location: ?route=feed");
             exit;
         }
-        include $_SERVER['DOCUMENT_ROOT'] . '/MiniSocialNetwork/app/views/edit_post.php';
+        include __DIR__ . '/../views/edit_post.php';
     }
 
     public function updatePost()
     {
         $this->requireLogin();
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $postId = (int) $_POST['post_id'];
+            $postId  = (int) $_POST['post_id'];
             $content = trim($_POST['content']);
             $post = $this->postModel->getPostById($postId);
             if ($post && $post['user_id'] == $_SESSION['user_id'] && $content !== '') {
@@ -148,13 +157,13 @@ class FeedController
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $full_name = trim($_POST['full_name']);
-            $username = trim($_POST['username']);
-            $bio = trim($_POST['bio'] ?? '');
+            $username  = trim($_POST['username']);
+            $bio       = trim($_POST['bio'] ?? '');
 
             $profile_image = null;
             if (!empty($_FILES['profile_image']['name']) && $_FILES['profile_image']['error'] === 0) {
                 $filename = time() . '_' . basename($_FILES['profile_image']['name']);
-                $dest = $_SERVER['DOCUMENT_ROOT'] . "/MiniSocialNetwork/public/uploads/$filename";
+                $dest = __DIR__ . "/../../public/uploads/$filename";
                 if (move_uploaded_file($_FILES['profile_image']['tmp_name'], $dest)) {
                     $profile_image = $filename;
                 }
@@ -169,36 +178,18 @@ class FeedController
             exit;
         }
 
-        include $_SERVER['DOCUMENT_ROOT'] . '/MiniSocialNetwork/app/views/edit_profile.php';
-    }
-
-    public function profile()
-    {
-        $this->requireLogin();
-        $userModel = new UserModel();
-        $user = $userModel->findUserById($_SESSION['user_id']);
-
-        if (!$user) {
-            // redirect to feed or login if user not found
-            header("Location: ?route=feed");
-            exit;
-        }
-
-        $posts = $this->postModel->getPostsByUser($user['id']);
-        include $_SERVER['DOCUMENT_ROOT'] . '/MiniSocialNetwork/app/views/profile.php';
+        include __DIR__ . '/../views/edit_profile.php';
     }
 
     public function search()
     {
         $this->requireLogin();
-        $query = trim($_GET['q'] ?? '');
+        $query   = trim($_GET['q'] ?? '');
         $results = [];
-
         if ($query !== '') {
             $userModel = new UserModel();
-            $results = $userModel->searchByUsername($query);
+            $results   = $userModel->searchByUsername($query);
         }
-
-        include $_SERVER['DOCUMENT_ROOT'] . '/MiniSocialNetwork/app/views/search.php';
+        include __DIR__ . '/../views/search.php';
     }
 }
