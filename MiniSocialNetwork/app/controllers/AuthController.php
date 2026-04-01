@@ -2,17 +2,22 @@
 
 class AuthController
 {
+    private function redirect($route)
+    {
+        $base = (isset($_SERVER['HTTPS']) ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'];
+        header("Location: $base?route=$route");
+        exit;
+    }
+
     public function login()
     {
-        if ($_SERVER['REQUEST_METHOD'] !== 'POST')
-            return;
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') return;
 
         $username = trim($_POST['username']);
         $password = $_POST['password'];
 
         if (empty($username) || empty($password)) {
-            header("Location: ?route=login&error=Please fill all fields");
-            exit;
+            $this->redirect('login&error=Please fill all fields');
         }
 
         $userModel = new UserModel();
@@ -28,34 +33,30 @@ class AuthController
             exit;
         }
 
-        $_SESSION['user_id'] = $user['id'];
-        $_SESSION['username'] = $user['username'];
+        $_SESSION['user_id']       = $user['id'];
+        $_SESSION['username']      = $user['username'];
         $_SESSION['profile_image'] = $user['profile_image'] ?? 'default.png';
 
-        header("Location: ?route=feed");
-        exit;
+        $this->redirect('feed');
     }
 
     public function logout()
     {
         session_unset();
         session_destroy();
-        header("Location: ?route=login");
-        exit;
+        $this->redirect('login');
     }
 
     public function signup()
     {
-        if ($_SERVER['REQUEST_METHOD'] !== 'POST')
-            return;
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') return;
 
-        $username = trim($_POST['username'] ?? '');
-        $password = $_POST['password'] ?? '';
+        $username        = trim($_POST['username'] ?? '');
+        $password        = $_POST['password'] ?? '';
         $confirmPassword = $_POST['confirm-password'] ?? '';
 
         if (empty($username) || empty($password) || empty($confirmPassword)) {
-            header("Location: ?route=signup&error=Please fill all fields");
-            exit;
+            $this->redirect('signup&error=Please fill all fields');
         }
 
         if ($password !== $confirmPassword) {
@@ -66,8 +67,7 @@ class AuthController
         $userModel = new UserModel();
 
         if ($userModel->findUserByUsername($username)) {
-            header("Location: ?route=signup&error=Username already taken");
-            exit;
+            $this->redirect('signup&error=Username already taken');
         }
 
         $userId = $userModel->insertUser($username, $password);
@@ -75,7 +75,7 @@ class AuthController
         if ($userId) {
             echo '<script>alert("Registration successful!"); window.location.href="?route=login";</script>';
         } else {
-            header("Location: ?route=signup&error=Registration failed");
+            $this->redirect('signup&error=Registration failed');
         }
         exit;
     }
