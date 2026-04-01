@@ -10,7 +10,7 @@ class PostModel
 
     public function getAllPosts()
     {
-        $sql = "SELECT posts.id, posts.content, posts.user_id, posts.created_at,
+        $sql = "SELECT DISTINCT posts.id, posts.content, posts.user_id, posts.created_at,
                 users.username, users.profile_image,
                 (SELECT COUNT(*) FROM likes WHERE likes.post_id = posts.id) AS likes
                 FROM posts
