@@ -10,11 +10,12 @@ class PostModel
 
     public function getAllPosts()
     {
-        $sql = "SELECT DISTINCT posts.id, posts.content, posts.user_id, posts.created_at,
+        $sql = "SELECT posts.id, posts.content, posts.user_id, posts.created_at,
                 users.username, users.profile_image,
                 (SELECT COUNT(*) FROM likes WHERE likes.post_id = posts.id) AS likes
                 FROM posts
                 JOIN users ON posts.user_id = users.id
+                GROUP BY posts.id
                 ORDER BY posts.created_at DESC";
         $result = $this->conn->query($sql);
         $posts = [];
