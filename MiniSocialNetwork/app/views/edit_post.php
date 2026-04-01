@@ -3,14 +3,14 @@
 
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edit Post</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 
 <body>
-    <?php include $_SERVER['DOCUMENT_ROOT'] . '/MiniSocialNetwork/app/views/partials/navbar.php'; ?>
-
-    <div class="container mt-4">
+    <?php include __DIR__ . '/partials/navbar.php'; ?>
+    <div class="container mt-4" style="max-width:680px;">
         <h3>Edit Post</h3>
         <form method="POST" action="?route=update_post">
             <input type="hidden" name="post_id" value="<?= $post['id'] ?>">

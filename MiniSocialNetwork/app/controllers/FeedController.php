@@ -14,11 +14,17 @@ class FeedController
         $this->postModel = new PostModel($conn);
     }
 
+    private function redirect($route)
+    {
+        $base = (isset($_SERVER['HTTPS']) ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'];
+        header("Location: $base?route=$route");
+        exit;
+    }
+
     private function requireLogin()
     {
         if (!isset($_SESSION['user_id'])) {
-            header("Location: ?route=login");
-            exit;
+            $this->redirect('login');
         }
     }
 
@@ -50,8 +56,7 @@ class FeedController
                 $this->postModel->insertPost($_SESSION['user_id'], $content);
             }
         }
-        header("Location: ?route=feed");
-        exit;
+        $this->redirect('feed');
     }
 
     public function deletePost()
@@ -60,8 +65,7 @@ class FeedController
         if (isset($_GET['post_id'])) {
             $this->postModel->deletePost((int) $_GET['post_id'], $_SESSION['user_id']);
         }
-        header("Location: ?route=feed");
-        exit;
+        $this->redirect('feed');
     }
 
     public function like()
@@ -70,8 +74,7 @@ class FeedController
         if (isset($_GET['post_id'])) {
             $this->postModel->likePost($_SESSION['user_id'], (int) $_GET['post_id']);
         }
-        header("Location: ?route=feed");
-        exit;
+        $this->redirect('feed');
     }
 
     public function addComment()
@@ -83,8 +86,7 @@ class FeedController
                 $this->postModel->addComment($_SESSION['user_id'], (int) $_GET['post_id'], $comment);
             }
         }
-        header("Location: ?route=feed");
-        exit;
+        $this->redirect('feed');
     }
 
     public function editComment()
@@ -92,8 +94,7 @@ class FeedController
         $this->requireLogin();
         $comment = $this->postModel->getCommentById((int) $_GET['comment_id']);
         if (!$comment || $comment['user_id'] != $_SESSION['user_id']) {
-            header("Location: ?route=feed");
-            exit;
+            $this->redirect('feed');
         }
         include __DIR__ . '/../views/edit_comment.php';
     }
@@ -103,14 +104,13 @@ class FeedController
         $this->requireLogin();
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $commentId = (int) $_POST['comment_id'];
-            $content   = trim($_POST['content']);
-            $comment   = $this->postModel->getCommentById($commentId);
+            $content = trim($_POST['content']);
+            $comment = $this->postModel->getCommentById($commentId);
             if ($comment && $comment['user_id'] == $_SESSION['user_id'] && $content !== '') {
                 $this->postModel->updateComment($commentId, $content);
             }
         }
-        header("Location: ?route=feed");
-        exit;
+        $this->redirect('feed');
     }
 
     public function deleteComment()
@@ -119,8 +119,7 @@ class FeedController
         if (isset($_GET['comment_id'])) {
             $this->postModel->deleteComment((int) $_GET['comment_id'], $_SESSION['user_id']);
         }
-        header("Location: ?route=feed");
-        exit;
+        $this->redirect('feed');
     }
 
     public function editPost()
@@ -128,8 +127,7 @@ class FeedController
         $this->requireLogin();
         $post = $this->postModel->getPostById((int) $_GET['post_id']);
         if (!$post || $post['user_id'] != $_SESSION['user_id']) {
-            header("Location: ?route=feed");
-            exit;
+            $this->redirect('feed');
         }
         include __DIR__ . '/../views/edit_post.php';
     }
@@ -138,15 +136,14 @@ class FeedController
     {
         $this->requireLogin();
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $postId  = (int) $_POST['post_id'];
+            $postId = (int) $_POST['post_id'];
             $content = trim($_POST['content']);
             $post = $this->postModel->getPostById($postId);
             if ($post && $post['user_id'] == $_SESSION['user_id'] && $content !== '') {
                 $this->postModel->updatePost($postId, $content);
             }
         }
-        header("Location: ?route=feed");
-        exit;
+        $this->redirect('feed');
     }
 
     public function editProfile()
@@ -157,8 +154,8 @@ class FeedController
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $full_name = trim($_POST['full_name']);
-            $username  = trim($_POST['username']);
-            $bio       = trim($_POST['bio'] ?? '');
+            $username = trim($_POST['username']);
+            $bio = trim($_POST['bio'] ?? '');
 
             $profile_image = null;
             if (!empty($_FILES['profile_image']['name']) && $_FILES['profile_image']['error'] === 0) {
@@ -171,11 +168,9 @@ class FeedController
 
             $userModel->updateProfile($_SESSION['user_id'], $full_name, $username, $bio, $profile_image);
             $_SESSION['username'] = $username;
-            if ($profile_image) {
+            if ($profile_image)
                 $_SESSION['profile_image'] = $profile_image;
-            }
-            header("Location: ?route=profile");
-            exit;
+            $this->redirect('profile');
         }
 
         include __DIR__ . '/../views/edit_profile.php';
@@ -184,11 +179,11 @@ class FeedController
     public function search()
     {
         $this->requireLogin();
-        $query   = trim($_GET['q'] ?? '');
+        $query = trim($_GET['q'] ?? '');
         $results = [];
         if ($query !== '') {
             $userModel = new UserModel();
-            $results   = $userModel->searchByUsername($query);
+            $results = $userModel->searchByUsername($query);
         }
         include __DIR__ . '/../views/search.php';
     }
