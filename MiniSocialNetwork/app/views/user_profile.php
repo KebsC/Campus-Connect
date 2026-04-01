@@ -32,6 +32,7 @@ $posts = $postModel->getPostsByUser($user['id']);
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= htmlspecialchars($user['username']) ?>'s Profile</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
 </head>
 
 <body>
@@ -61,7 +62,8 @@ $posts = $postModel->getPostsByUser($user['id']);
                             <strong><?= htmlspecialchars($user['username']) ?></strong>
                             <?php if (!empty($post['created_at'])): ?>
                                 <div class="text-muted" style="font-size:0.75rem;">
-                                    <?= date('M j, Y g:i A', strtotime($post['created_at'])) ?></div>
+                                    <?= date('M j, Y g:i A', strtotime($post['created_at'])) ?>
+                                </div>
                             <?php endif; ?>
                             <p class="mb-1 mt-1"><?= htmlspecialchars($post['content']) ?></p>
                             <small class="text-muted"><?= $post['likes'] ?? 0 ?> Likes</small>
