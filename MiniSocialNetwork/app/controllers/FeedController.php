@@ -5,7 +5,6 @@ require_once __DIR__ . '/../../config/database.php';
 
 class FeedController
 {
-    /** @var PostModel */
     private $postModel;
 
     public function __construct()
@@ -32,9 +31,10 @@ class FeedController
     {
         $this->requireLogin();
         $posts = $this->postModel->getAllPosts();
-        foreach ($posts as &$post) {
-            $post['comments'] = $this->postModel->getCommentsByPost($post['id']);
+        foreach ($posts as $key => $post) {
+            $posts[$key]['comments'] = $this->postModel->getCommentsByPost($post['id']);
         }
+        unset($post);
         include __DIR__ . '/../views/feed.php';
     }
 
